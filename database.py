@@ -10,13 +10,21 @@ class Database:
         self.cursor = self.conn.cursor()
 
     def create_user(self, tg_id, name, phone, username):
-        self.cursor.execute('INSERT INTO users (tg_id, name, phone, username) VALUES (?, ?, ?, ?)',
-                            (tg_id, name, phone, username))
-        self.conn.commit()
+        if val.validate_number(tg_id) & val.validate_text(name) & val.validate_number(phone) & val.validate_text(username):
+            self.cursor.execute('INSERT INTO users (tg_id, name, phone, username) VALUES (?, ?, ?, ?)',
+                                (tg_id, name, phone, username))
+            self.conn.commit()
+        else:
+            # send error to admin
+            pass
 
     def get_user(self, tg_id):
-        self.cursor.execute('SELECT * FROM users WHERE tg_id = ?', (tg_id,))
-        return self.cursor.fetchone()
+        if val.validate_number(tg_id):
+            self.cursor.execute('SELECT * FROM users WHERE tg_id = ?', (tg_id,))
+            return self.cursor.fetchone()
+        else:
+            # send error to admin
+            pass
 
 # If user in database - returns user data
 # if user is not in database (check with tg_id) - call function for create user
@@ -33,24 +41,36 @@ class Database:
             # send error to admin
             pass
 
-    def update_user(self, tg_id, new_username):
-        if val.validate_text(new_username):
-            self.cursor.execute('UPDATE users SET username = ? WHERE tg_id = ?', (new_username, tg_id))
-            self.conn.commit()
+    def update_user(self, tg_id, new_name=False, new_username=False):
+
+        if val.validate_number(tg_id):
+            if new_name & val.validate_text(new_name):
+                self.cursor.execute('UPDATE users SET name = ? WHERE tg_id = ?', (new_name, tg_id))
+                self.conn.commit()
+            elif new_username & val.validate_text(new_username):
+                self.cursor.execute('UPDATE users SET username = ? WHERE tg_id = ?', (new_username, tg_id))
+                self.conn.commit()
+            else:
+                # send error to admin
+                pass
         else:
             # send error to admin
             pass
 
     def get_product(self, slug):
-        self.cursor.execute('SELECT * FROM products WHERE slug = ?', (slug,))
-        return self.cursor.fetchone()
+        if val.validate_text(slug):
+            self.cursor.execute('SELECT * FROM products WHERE slug = ?', (slug,))
+            return self.cursor.fetchone()
+        else:
+            # send error to admin
+            pass
 
     def get_product_list(self):
         self.cursor.execute('SELECT * FROM products')
         return self.cursor.fetchall()
 
     def create_order(self, user_id, order_details, status='new'):
-        if val.validate_dict(order_details):
+        if val.validate_number(user_id) & val.validate_dict(order_details):
             self.cursor.execute('INSERT INTO orders (user_id, order_details, status) VALUES (?, ?, ?)',
                                 (user_id, json.dumps(order_details), status))
             self.conn.commit()
@@ -60,12 +80,17 @@ class Database:
 
 # need test
     def get_last_new_by_tg_id(self, tg_id):
-        # Get user_id from users
-        self.cursor.execute('SELECT user_id FROM users WHERE tg_id = ?', (tg_id,))
-        user_id = self.cursor.fetchone()
-
-        self.cursor.execute('SELECT * FROM orders WHERE user_id = ? AND status = "new" ORDER BY datetime DESC LIMIT 1', (user_id,))
-        return self.cursor.fetchone()
+        if val.validate_number(tg_id):
+            self.cursor.execute('''
+                SELECT o.* FROM orders o
+                JOIN users u ON o.user_id = u.id
+                WHERE u.tg_id = ? AND o.status = "new"
+                ORDER BY o.datetime DESC LIMIT 1
+            ''', (tg_id,))
+            return self.cursor.fetchone()
+        else:
+            # send error to admin
+            pass
 
     def update_order(self, order_id, order_details):
         if val.validate_dict(order_details):
