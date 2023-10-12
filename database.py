@@ -45,10 +45,10 @@ class Database:
     def update_user(self, tg_id, new_name=False, new_username=False):
 
         if val.validate_number(tg_id):
-            if new_name & val.validate_text(new_name):
+            if new_name and val.validate_text(new_name):
                 self.cursor.execute('UPDATE users SET name = ? WHERE tg_id = ?', (new_name, tg_id))
                 self.conn.commit()
-            elif new_username & val.validate_text(new_username):
+            elif new_username and val.validate_text(new_username):
                 self.cursor.execute('UPDATE users SET username = ? WHERE tg_id = ?', (new_username, tg_id))
                 self.conn.commit()
             else:
