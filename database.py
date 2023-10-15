@@ -10,7 +10,7 @@ class Database:
         self.cursor = self.conn.cursor()
 
     def create_user(self, tg_id, name, phone, username):
-        if val.validate_number(tg_id) & val.validate_text(name) & val.validate_text(phone) & val.validate_text(username):
+        if all(map(val.validate_text, [tg_id, name, phone, username])):
             self.cursor.execute('INSERT INTO users (tg_id, name, phone, username) VALUES (?, ?, ?, ?)',
                                 (tg_id, name, phone, username))
             self.conn.commit()
@@ -20,7 +20,7 @@ class Database:
         return True
 
     def get_user(self, tg_id):
-        if val.validate_number(tg_id):
+        if val.validate_text(tg_id):
             self.cursor.execute('SELECT * FROM users WHERE tg_id = ?', (tg_id,))
             return self.cursor.fetchone()
         else:
@@ -31,7 +31,7 @@ class Database:
 # if user is not in database (check with tg_id) - call function for create user
     def get_or_create_user(self, tg_id, name, phone, username):
         # validation input data
-        if val.validate_number(tg_id) & val.validate_text(name) & val.validate_text(phone) & val.validate_text(username):
+        if all(map(val.validate_text, [tg_id, name, phone, username])):
             user = self.get_user(tg_id)
             if user:
                 return user
@@ -44,11 +44,11 @@ class Database:
 
     def update_user(self, tg_id, new_name=False, new_username=False):
 
-        if val.validate_number(tg_id):
-            if new_name and val.validate_text(new_name):
+        if val.validate_text(tg_id):
+            if new_name & val.validate_text(new_name):
                 self.cursor.execute('UPDATE users SET name = ? WHERE tg_id = ?', (new_name, tg_id))
                 self.conn.commit()
-            elif new_username and val.validate_text(new_username):
+            elif new_username & val.validate_text(new_username):
                 self.cursor.execute('UPDATE users SET username = ? WHERE tg_id = ?', (new_username, tg_id))
                 self.conn.commit()
             else:
@@ -83,7 +83,7 @@ class Database:
 
 # need test
     def get_last_new_by_tg_id(self, tg_id):
-        if val.validate_number(tg_id):
+        if val.validate_text(tg_id):
             self.cursor.execute('''
                 SELECT o.* FROM orders o
                 JOIN users u ON o.user_id = u.id
