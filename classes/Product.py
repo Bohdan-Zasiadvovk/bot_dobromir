@@ -1,4 +1,5 @@
-from bot_dobromir.database import Database
+from classes.Database import Database
+import json
 
 
 class Product:
@@ -47,3 +48,11 @@ class Product:
     @name.setter
     def name(self, value):
         self._name = value
+
+    def __str__(self):
+        product_dict = {
+            "id": self.id,
+            "slug": self.slug,
+            "name": self.name
+        }
+        return json.dumps(product_dict, indent=4)
