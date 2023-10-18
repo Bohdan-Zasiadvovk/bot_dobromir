@@ -1,11 +1,19 @@
-from bot_dobromir.database import Database
+from classes.Database import Database
+import json
 
 
 class User:
     DBcursor = None
+    default_name = ""
+    default_phone = ""
+    default_username = ""
 
-    def __init__(self, tg_id: str, db_cursor: Database):
+    def __init__(self, tg_id: str, db_cursor: Database, name="", phone="", username=""):
         self.tg_id = tg_id
+        self.default_name = name
+        self.default_phone = phone
+        self.default_username = username
+
         self.DBcursor = db_cursor
 
         user_dict = self.db_to_dict()
@@ -15,8 +23,22 @@ class User:
         self.phone = user_dict['phone']
         self.username = user_dict['username']
 
+    def __str__(self):
+        user_dict = {
+            "id": self.id,
+            "tg_id": self.tg_id,
+            "name": self.name,
+            "phone": self.phone,
+            "username": self.username
+        }
+        return json.dumps(user_dict, indent=4)
+
     def db_to_dict(self):
         user_tuple = self.DBcursor.get_user(self.tg_id)
+        if not user_tuple:
+            self.DBcursor.create_user(self.tg_id, self.default_name, self.default_phone, self.default_username)
+            user_tuple = self.DBcursor.get_user(self.tg_id)
+
         user_list = list(user_tuple)
         user = {
             'id': user_list[0],
