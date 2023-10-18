@@ -12,9 +12,10 @@ class Order:
     def __init__(self, tg_id: str, db_cursor: Database, order_details=None):
         self.tg_id = tg_id
         self.DBcursor = db_cursor
+        print(f"tg_id: {tg_id}")
         self.user = User(tg_id, db_cursor)
         self.user_id = self.user.id
-        self.order_details = dict(order_details) or dict() # @&@&@&@&&@
+        # self.order_details = dict(order_details) or dict() # @&@&@&@&&@
 
         order_dict = self.db_to_dict()
 
@@ -33,7 +34,7 @@ class Order:
         order = {
             'id': order_list[0],
             'user_id': order_list[1],
-            'order_details': order_list[2],
+            'order_details': json.loads(order_list[2]),
             'datetime': order_list[3],
             'status': order_list[4],
         }
@@ -78,4 +79,10 @@ class Order:
         return True
 
     def __del__(self):
-        self.DBcursor.update_order(self.id, json.dumps(self.order_details), self.status)
+        try:
+            print(f"saved order {self.id}")
+            print(self.order_details)
+            self.DBcursor.update_order(self.id, self.order_details, self.status)
+        except BaseException as e:
+            print(e)
+            print(self.order_details)

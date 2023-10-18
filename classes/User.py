@@ -9,6 +9,8 @@ class User:
     default_username = ""
 
     def __init__(self, tg_id: str, db_cursor: Database, name="", phone="", username=""):
+        if tg_id == "5469111431":
+            print("WARNING!!!!")
         self.tg_id = tg_id
         self.default_name = name
         self.default_phone = phone

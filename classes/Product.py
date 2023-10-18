@@ -25,6 +25,16 @@ class Product:
         }
         return product
 
+    @staticmethod
+    def get_all_products(db_cursor:Database):
+        product_list = db_cursor.get_product_list()
+        product_objs = []
+        for product in product_list:
+            product_objs.append(
+                Product(list(product)[1], db_cursor)
+            )
+        return product_objs
+
     @property
     def id(self):
         return self._id
