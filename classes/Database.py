@@ -1,11 +1,11 @@
+from classes.Validator import Validator
 import sqlite3
 import json
-from Validator import *
 
 val = Validator()
 
 class Database:
-    def __init__(self, db_name='bot_dobromir.db'):
+    def __init__(self, db_name='test_bot_dobromir.db'):
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
 
@@ -45,10 +45,10 @@ class Database:
     def update_user(self, tg_id, new_name=False, new_username=False):
 
         if val.validate_text(tg_id):
-            if new_name & val.validate_text(new_name):
+            if new_name and val.validate_text(new_name):
                 self.cursor.execute('UPDATE users SET name = ? WHERE tg_id = ?', (new_name, tg_id))
                 self.conn.commit()
-            elif new_username & val.validate_text(new_username):
+            elif new_username and val.validate_text(new_username):
                 self.cursor.execute('UPDATE users SET username = ? WHERE tg_id = ?', (new_username, tg_id))
                 self.conn.commit()
             else:
@@ -72,7 +72,7 @@ class Database:
         return self.cursor.fetchall()
 
     def create_order(self, user_id, order_details, status='new'):
-        if val.validate_number(user_id) & val.validate_dict(order_details):
+        if val.validate_number(user_id) and val.validate_dict(order_details):
             self.cursor.execute('INSERT INTO orders (user_id, order_details, status) VALUES (?, ?, ?)',
                                 (user_id, json.dumps(order_details), status))
             self.conn.commit()
@@ -100,9 +100,10 @@ class Database:
             # send error to admin
             pass
 
-    def update_order(self, order_id, order_details):
+    def update_order(self, order_id, order_details, status):
         if val.validate_dict(order_details):
-            self.cursor.execute('UPDATE orders SET order_details = ? WHERE id = ?', (json.dumps(order_details), order_id))
+            self.cursor.execute('UPDATE orders SET order_details = ?, status = ? WHERE id = ?',
+                                (json.dumps(order_details), status, order_id))
             self.conn.commit()
         else:
             # send error to admin
