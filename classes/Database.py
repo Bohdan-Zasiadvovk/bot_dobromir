@@ -1,6 +1,6 @@
 import sqlite3
 import json
-from validator import *
+from Validator import *
 
 val = Validator()
 
