@@ -5,7 +5,7 @@ import json
 val = Validator()
 
 class Database:
-    def __init__(self, db_name='test_bot_dobromir.db'):
+    def __init__(self, db_name='bot_dobromir.db'):
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
 

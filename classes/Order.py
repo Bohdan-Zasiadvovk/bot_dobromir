@@ -9,13 +9,11 @@ class Order:
     user_id = None
     status = ''
 
-    def __init__(self, tg_id: str, db_cursor: Database, order_details=None):
+    def __init__(self, tg_id: str, db_cursor: Database, order_details={}):
         self.tg_id = tg_id
         self.DBcursor = db_cursor
-        print(f"tg_id: {tg_id}")
         self.user = User(tg_id, db_cursor)
         self.user_id = self.user.id
-        # self.order_details = dict(order_details) or dict() # @&@&@&@&&@
 
         order_dict = self.db_to_dict()
 
@@ -80,9 +78,7 @@ class Order:
 
     def __del__(self):
         try:
-            print(f"saved order {self.id}")
-            print(self.order_details)
             self.DBcursor.update_order(self.id, self.order_details, self.status)
         except BaseException as e:
-            print(e)
-            print(self.order_details)
+            # doing something
+            pass

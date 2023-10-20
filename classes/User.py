@@ -10,6 +10,7 @@ class User:
 
     def __init__(self, tg_id: str, db_cursor: Database, name="", phone="", username=""):
         if tg_id == "5469111431":
+            # doing something
             print("WARNING!!!!")
         self.tg_id = tg_id
         self.default_name = name
@@ -40,7 +41,6 @@ class User:
         if not user_tuple:
             self.DBcursor.create_user(self.tg_id, self.default_name, self.default_phone, self.default_username)
             user_tuple = self.DBcursor.get_user(self.tg_id)
-
         user_list = list(user_tuple)
         user = {
             'id': user_list[0],
