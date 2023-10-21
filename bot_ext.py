@@ -32,10 +32,10 @@ class TelegramBot:
         @self.bot.message_handler(content_types=['contact'])
         def handle_contact(message):
             # Create or get a user
-            username = message.from_user.username
-            phone = message.contact.phone_number
+            username = message.from_user.username if message.from_user.username else ""
+            phone = message.contact.phone_number if message.contact.phone_number else ""
             tg_id = message.from_user.id
-            name = message.chat.first_name
+            name = message.chat.first_name if message.chat.first_name else ""
             user = User(str(tg_id), Database(self.database_filename), name, phone, username)
             self.send_product_selection(message)
 
