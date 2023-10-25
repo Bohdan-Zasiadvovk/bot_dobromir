@@ -108,11 +108,21 @@ class TelegramBot:
 
     def send_additional_product_selection(self, message):
         markup = types.InlineKeyboardMarkup(row_width=2)
+
+        order = Order(str(message.from_user.id), Database(self.database_filename, self))
+        if order:
+            order_message = f"Наразі Ваше замовлення:\n"
+            for product, count in order.get_order_details().items():
+                ProductObj = Product(product, Database(self.database_filename, self))
+                order_message += f"{ProductObj.name}: {count}\n"
+            self.bot.send_message(message.chat.id, order_message)
+
         products = Product.get_all_products(Database(self.database_filename, self))
         for product in products:
             item = types.InlineKeyboardButton("Так, хочу " + product.name, callback_data=product.slug + "_additional")
             markup.add(item)
         item_finish = types.InlineKeyboardButton("Ні, дякую, це все", callback_data="finish_order")
+
         markup.add(item_finish)
         self.bot.send_message(message.chat.id, "Чи бажаєте додати щось ще?", reply_markup=markup)
 
