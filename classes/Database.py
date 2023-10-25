@@ -5,9 +5,10 @@ import json
 val = Validator()
 
 class Database:
-    def __init__(self, db_name='bot_dobromir.db'):
+    def __init__(self, db_name='bot_dobromir.db', botObj=False):
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
+        self.botObj = botObj
 
     def create_user(self, tg_id, name, phone, username):
         if all(map(val.validate_text, [tg_id, name, phone, username])):
@@ -23,7 +24,9 @@ class Database:
         if val.validate_text(tg_id):
             self.cursor.execute('SELECT * FROM users WHERE tg_id = ?', (tg_id,))
             return self.cursor.fetchone()
+
         else:
+            self.botObj.send_message_admin("error")
             # send error to admin
             pass
 

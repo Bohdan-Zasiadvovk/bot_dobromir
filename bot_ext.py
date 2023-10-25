@@ -36,7 +36,7 @@ class TelegramBot:
             phone = message.contact.phone_number if message.contact.phone_number else ""
             tg_id = message.from_user.id
             name = message.chat.first_name if message.chat.first_name else ""
-            user = User(str(tg_id), Database(self.database_filename), name, phone, username)
+            user = User(str(tg_id), Database(self.database_filename, self), name, phone, username)
             self.send_product_selection(message)
 
         @self.bot.message_handler(content_types=['text'])
@@ -50,7 +50,7 @@ class TelegramBot:
             elif self.validator.validate_number(count_of_product):
                 count = int(message.text)
                 # Update the product count in the current order
-                order = Order(str(message.from_user.id), Database(self.database_filename))
+                order = Order(str(message.from_user.id), Database(self.database_filename, self))
                 if order:
                     product = Tools.get_key_by_value(order.get_order_details(), 0)
                     order.set_count(product, count)
@@ -61,7 +61,7 @@ class TelegramBot:
             chat_id = str(call.message.chat.id)
             if call.data == "finish_order":
                 # Finish the order and notify the admin
-                order = Order(chat_id, Database(self.database_filename))
+                order = Order(chat_id, Database(self.database_filename, self))
                 order.confirmed_order()
                 self.notify_admin(chat_id)
                 self.bot.send_message(chat_id,
@@ -75,9 +75,9 @@ class TelegramBot:
             else:
                 # Handle product selection and additional product selection
                 product_slug = call.data.replace("_additional", "")
-                product = Product(product_slug, Database(self.database_filename))
+                product = Product(product_slug, Database(self.database_filename, self))
                 if product:
-                    order = Order(chat_id, Database(self.database_filename))
+                    order = Order(chat_id, Database(self.database_filename, self))
 
                     if product.slug in order.get_order_details():
                         old_count = order.get_order_details()[product.slug]
@@ -96,19 +96,19 @@ class TelegramBot:
 
     def send_product_selection(self, message):
         markup = types.InlineKeyboardMarkup(row_width=2)
-        products = Product.get_all_products(Database(self.database_filename))
+        products = Product.get_all_products(Database(self.database_filename, self))
         for product in products:
             item = types.InlineKeyboardButton(product.name, callback_data=product.slug)
             markup.add(item)
         self.bot.send_message(message.chat.id, "Оберіть продукт:", reply_markup=markup)
 
         # Create an empty order for the user
-        order = Order(str(message.from_user.id), Database(self.database_filename))
-        # Database(self.database_filename).create_order(order)
+        order = Order(str(message.from_user.id), Database(self.database_filename, self))
+        # Database(self.database_filename, self).create_order(order)
 
     def send_additional_product_selection(self, message):
         markup = types.InlineKeyboardMarkup(row_width=2)
-        products = Product.get_all_products(Database(self.database_filename))
+        products = Product.get_all_products(Database(self.database_filename, self))
         for product in products:
             item = types.InlineKeyboardButton("Так, хочу " + product.name, callback_data=product.slug + "_additional")
             markup.add(item)
@@ -117,16 +117,20 @@ class TelegramBot:
         self.bot.send_message(message.chat.id, "Чи бажаєте додати щось ще?", reply_markup=markup)
 
     def notify_admin(self, user_tg_id):
-        order = Order(user_tg_id, Database(self.database_filename))
+        order = Order(user_tg_id, Database(self.database_filename, self))
         if order:
-            user = User(user_tg_id, Database(self.database_filename))
+            user = User(user_tg_id, Database(self.database_filename, self))
             if user:
                 admin_message = f"Надійшло нове замовлення від {user.name}. Tg: @{user.username}\n(телефон: {user.phone}):\n"
                 for product, count in order.get_order_details().items():
-                    ProductObj = Product(product, Database(self.database_filename))
+                    ProductObj = Product(product, Database(self.database_filename, self))
                     admin_message += f"{ProductObj.name}: {count}\n"
                 # TODO: Replace ADMIN_CHAT_ID with the actual chat ID of the admin
-                self.bot.send_message(382635535, admin_message)
+                self.bot.send_message(321107998, admin_message)
+
+    def send_message_admin(self, message):
+        self.bot.send_message(321107998, message)
+
 
     def start_polling(self):
         self.bot.polling(none_stop=True)
