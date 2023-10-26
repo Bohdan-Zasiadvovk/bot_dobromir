@@ -7,12 +7,15 @@ from classes.User import User
 from classes.Validator import Validator
 from classes.Tools import Tools
 # bot_id_in_tg : 5469111431
+# Id Romaska: 321107998
+# Id Bohdan: 382635535
 
 class TelegramBot:
-    def __init__(self, token):
+    def __init__(self, token, admin_id='321107998'):
         self.bot = telebot.TeleBot(token)
         self.database_filename = "bot_dobromir.db"
         self.validator = Validator()
+        self.admin_id = admin_id
 
         # Initialize handlers
         self.initialize_handlers()
@@ -137,10 +140,10 @@ class TelegramBot:
                     ProductObj = Product(product, Database(self.database_filename, self))
                     admin_message += f"{ProductObj.name}: {count}\n"
                 # TODO: Replace ADMIN_CHAT_ID with the actual chat ID of the admin
-                self.bot.send_message(382635535, admin_message)
+                self.bot.send_message(self.admin_id, admin_message)
 
     def send_message_admin(self, message):
-        self.bot.send_message(382635535, message)
+        self.bot.send_message(self.admin_id, message)
 
 
     def start_polling(self):
