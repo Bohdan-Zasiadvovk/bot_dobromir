@@ -16,8 +16,11 @@ class Database:
                                 (tg_id, name, phone, username))
             self.conn.commit()
         else:
-            # send error to admin
-            pass
+            self.botObj.send_message_admin(f'Виникла помилка валідації при створенні користувача\n'
+                                           f'Користувач: @{username}\n'
+                                           f'Ім\'я: {name}\n'
+                                           f'Телефон: {phone}\n'
+                                           f'Tg_id: {tg_id}')
         return True
 
     def get_user(self, tg_id):
@@ -26,9 +29,9 @@ class Database:
             return self.cursor.fetchone()
 
         else:
-            self.botObj.send_message_admin("error")
-            # send error to admin
-            pass
+            self.botObj.send_message_admin(f'Виникла помилка валідації при отриманні користувача\n'
+                                           f'Користувач:\n'
+                                           f'Tg_id: {tg_id}')
 
 # If user in database - returns user data
 # if user is not in database (check with tg_id) - call function for create user
@@ -42,8 +45,11 @@ class Database:
                 self.create_user(tg_id, name, phone, username)
                 return self.get_user(tg_id)
         else:
-            # send error to admin
-            pass
+            self.botObj.send_message_admin(f'Виникла помилка валідації при створенні/отриманні користувача\n'
+                                           f'Користувач: @{username}\n'
+                                           f'Ім\'я: {name}\n'
+                                           f'Телефон: {phone}\n'
+                                           f'tg_id: {tg_id}')
 
     def update_user(self, tg_id, new_name=False, new_username=False):
 
@@ -55,11 +61,15 @@ class Database:
                 self.cursor.execute('UPDATE users SET username = ? WHERE tg_id = ?', (new_username, tg_id))
                 self.conn.commit()
             else:
-                # send error to admin
-                pass
+                self.botObj.send_message_admin(f'Виникла помилка валідації при оновленні користувача\n'
+                                               f'Користувач:\n'
+                                               f'Нове ім\'я: {new_name}\n'
+                                               f'Новий username: @{new_username}\n'
+                                               f'Tg_id: {tg_id}')
         else:
-            # send error to admin
-            pass
+            self.botObj.send_message_admin(f'Виникла помилка валідації при оновленні користувача\n'
+                                           f'Користувач:\n'
+                                           f'Tg_id: {tg_id}')
         return False
 
     def get_product(self, slug):
@@ -67,8 +77,7 @@ class Database:
             self.cursor.execute('SELECT * FROM products WHERE slug = ?', (slug,))
             return self.cursor.fetchone()
         else:
-            # send error to admin
-            pass
+            self.botObj.send_message_admin(f'Виникла помилка при отриманні товару {slug}')
 
     def get_product_list(self):
         self.cursor.execute('SELECT * FROM products')
@@ -80,11 +89,13 @@ class Database:
                                 (user_id, json.dumps(order_details), status))
             self.conn.commit()
         else:
-            # send error to admin
-            pass
+            self.botObj.send_message_admin(f'Виникла помилка валідації при створенні замовлення\n'
+                                           f'Користувач:\n'
+                                           f'Id: {user_id}\n'
+                                           f'Деталі замовлення:\n{order_details}\n'
+                                           f'Статус: {status}')
         return True
 
-# need test
     def get_last_new_by_tg_id(self, tg_id):
         if val.validate_text(tg_id):
             self.cursor.execute('''
@@ -100,8 +111,9 @@ class Database:
             else:
                 return False
         else:
-            # send error to admin
-            pass
+            self.botObj.send_message_admin(f'Виникла помилка валідації при отриманні останнього замовлення зі статусом new\n'
+                                           f'Користувач:\n'
+                                           f'Tg_id: {tg_id}')
 
     def update_order(self, order_id, order_details, status):
         if val.validate_dict(order_details):
@@ -109,8 +121,11 @@ class Database:
                                 (json.dumps(order_details), status, order_id))
             self.conn.commit()
         else:
-            # send error to admin
-            pass
+            self.botObj.send_message_admin(f'Виникла помилка валідації при оновленні замовлення\n'
+                                           f'Користувач:\n'
+                                           f'Id замовлення: {order_id}\n'
+                                           f'Деталі замовлення:\n{order_details}\n'
+                                           f'Статус: {status}')
         return True
 
     def set_status_confirmed(self, order_id):

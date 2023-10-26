@@ -1,6 +1,9 @@
 from classes.Database import Database
 from classes.User import User
+from classes.Validator import Validator
 import json
+
+val = Validator()
 
 class Order:
     DBcursor = None
@@ -9,10 +12,14 @@ class Order:
     user_id = None
     status = ''
 
-    def __init__(self, tg_id: str, db_cursor: Database, order_details={}):
-        self.tg_id = tg_id
+    def __init__(self, tg_id: str, db_cursor: Database, botObj=False, order_details={}):
+        self.botObj = botObj
+        if val.validate_text(tg_id):
+            self.tg_id = tg_id
+        else:
+            self.botObj.send_message_admin(f"Помилка валідації tg_id {tg_id} при ініціалізації Order")
         self.DBcursor = db_cursor
-        self.user = User(tg_id, db_cursor)
+        self.user = User(tg_id, db_cursor, self.botObj)
         self.user_id = self.user.id
 
         order_dict = self.db_to_dict()
@@ -80,5 +87,6 @@ class Order:
         try:
             self.DBcursor.update_order(self.id, self.order_details, self.status)
         except BaseException as e:
-            # doing something
-            pass
+            self.botObj.send_message_admin(f'Помилка виконання деструктора Order'
+                                           f'Id користувача: {self.id}'
+                                           f'Деталі замовлення: {self.order_details}')

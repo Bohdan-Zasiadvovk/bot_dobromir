@@ -1,6 +1,8 @@
 from classes.Database import Database
+from classes.Validator import Validator
 import json
 
+val = Validator()
 
 class User:
     DBcursor = None
@@ -8,14 +10,27 @@ class User:
     default_phone = ""
     default_username = ""
 
-    def __init__(self, tg_id: str, db_cursor: Database, name="", phone="", username=""):
+    def __init__(self, tg_id: str, db_cursor: Database, botObj=False, name="", phone="", username=""):
+        self.botObj = botObj
         if tg_id == "5469111431":
             # doing something
             print("WARNING!!!!")
-        self.tg_id = tg_id
-        self.default_name = name
-        self.default_phone = phone
-        self.default_username = username
+        if val.validate_text(tg_id):
+            self.tg_id = tg_id
+        else:
+            self.botObj.send_message_admin(f"Помилка валідації tg_id: {tg_id} при ініціалізації User")
+        if val.validate_text(name):
+            self.default_name = name
+        else:
+            self.botObj.send_message_admin(f"Помилка валідації name: {name} при ініціалізації User")
+        if val.validate_text(phone):
+            self.default_phone = phone
+        else:
+            self.botObj.send_message_admin(f"Помилка валідації phone: {phone} при ініціалізації User")
+        if val.validate_text(username):
+            self.default_username = username
+        else:
+            self.botObj.send_message_admin(f"Помилка валідації username: {username} при ініціалізації User")
 
         self.DBcursor = db_cursor
 
