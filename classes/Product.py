@@ -7,13 +7,8 @@ val = Validator()
 class Product:
     DBcursor = None
 
-    def __init__(self, slug: str, db_cursor: Database, botObj=False):
-        self.botObj = botObj
-        if val.validate_text(slug):
-            self.slug = slug
-            self.botObj.send_message_admin(f"Помилка валідації slug: {slug} при ініціалізації Product")
-        else:
-            self.botObj.send_message_admin(f"Помилка валідації slug: {slug} при ініціалізації Product")
+    def __init__(self, slug: str, db_cursor: Database):
+        self.slug = slug
         self.DBcursor = db_cursor
 
         product_dict = self.db_to_dict()

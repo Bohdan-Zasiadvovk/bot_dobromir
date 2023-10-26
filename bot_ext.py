@@ -54,6 +54,7 @@ class TelegramBot:
                 if order:
                     product = Tools.get_key_by_value(order.get_order_details(), 0)
                     order.set_count(product, count)
+                del order
                 self.send_additional_product_selection(message)
 
         @self.bot.callback_query_handler(func=lambda call: True)
@@ -75,7 +76,7 @@ class TelegramBot:
             else:
                 # Handle product selection and additional product selection
                 product_slug = call.data.replace("_additional", "")
-                product = Product(product_slug, Database(self.database_filename, self), self)
+                product = Product(product_slug, Database(self.database_filename, self))
                 if product:
                     order = Order(chat_id, Database(self.database_filename, self), self)
 
@@ -104,7 +105,6 @@ class TelegramBot:
 
         # Create an empty order for the user
         order = Order(str(message.from_user.id), Database(self.database_filename, self), self)
-        Database(self.database_filename, self).create_order(order)
 
     def send_additional_product_selection(self, message):
         markup = types.InlineKeyboardMarkup(row_width=2)
@@ -116,11 +116,13 @@ class TelegramBot:
         item_finish = types.InlineKeyboardButton("Ні, дякую, це все", callback_data="finish_order")
         markup.add(item_finish)
 
+
+        # send order to user
         order = Order(str(message.from_user.id), Database(self.database_filename, self), self)
         if order:
             order_message = f"Наразі Ваше замовлення:\n"
             for product, count in order.get_order_details().items():
-                ProductObj = Product(product, Database(self.database_filename, self), self)
+                ProductObj = Product(product, Database(self.database_filename, self))
                 order_message += f"{ProductObj.name}: {count}\n"
             self.bot.send_message(message.chat.id, order_message)
         self.bot.send_message(message.chat.id, "Чи бажаєте додати щось ще, або змінити?", reply_markup=markup)
@@ -132,7 +134,7 @@ class TelegramBot:
             if user:
                 admin_message = f"Надійшло нове замовлення від {user.name}. Tg: @{user.username}\n(телефон: {user.phone}):\n"
                 for product, count in order.get_order_details().items():
-                    ProductObj = Product(product, Database(self.database_filename, self), self)
+                    ProductObj = Product(product, Database(self.database_filename, self))
                     admin_message += f"{ProductObj.name}: {count}\n"
                 # TODO: Replace ADMIN_CHAT_ID with the actual chat ID of the admin
                 self.bot.send_message(382635535, admin_message)
