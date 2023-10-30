@@ -6,7 +6,7 @@ from bot_ext import TelegramBot
 
 
 if __name__ == "__main__":
-    bot = TelegramBot("5469111431:AAEDFcFVipS733lFOPcwUsqM8q5oGv5sFyo")
+    bot = TelegramBot("6584294127:AAEFUJMhVFRlc2ytqDJJQuhiYxR1ZGOmHTA", 382635535)
     bot.start_polling()
 
     # tg_id = "123123123"
