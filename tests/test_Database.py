@@ -13,8 +13,12 @@ def test_database():
     db = Database('./test_bot_dobromir.db')
 
     yield db
+
+    db.close()  # Закрываем соединение с базой данных
+    os.remove('./test_bot_dobromir.db')  # Удаляем файл базы данных
+
     # time.sleep(10)
-    del db
+    # del db
     # os.remove('./test_bot_dobromir.db')
 
 

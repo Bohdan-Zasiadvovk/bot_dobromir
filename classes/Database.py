@@ -143,5 +143,8 @@ class Database:
         self.conn.commit()
         return True
 
+    def close(self):
+        self.conn.close()
+
     def __del__(self):
         self.conn.close()
