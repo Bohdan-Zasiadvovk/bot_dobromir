@@ -1,7 +1,5 @@
-import time
 import pytest
 import json
-import sqlite3
 from classes.Database import Database
 from createdb import create_db
 import os
@@ -16,11 +14,6 @@ def test_database():
 
     db.close()  # Закрываем соединение с базой данных
     os.remove('./test_bot_dobromir.db')  # Удаляем файл базы данных
-
-    # time.sleep(10)
-    # del db
-    # os.remove('./test_bot_dobromir.db')
-
 
 def test_create_user(test_database):
     assert test_database.create_user('123123123', 'John Doe', '123456789', 'johndoe')
