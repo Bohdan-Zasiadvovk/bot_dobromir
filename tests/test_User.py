@@ -17,7 +17,6 @@ def test_database():
 def test_create_user(test_database):
     user = User('37373737', test_database, './test_bot_dobromir.db',  'John Doe', '380123456789', 'johndoe')
     assert user is not None
-    print(user)
     assert user.tg_id == "37373737"
     assert user.name == 'John Doe'
     assert user.phone == '380123456789'
