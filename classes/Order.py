@@ -45,9 +45,6 @@ class Order:
         }
         return order
 
-    def create_order(self):
-        self.DBcursor.create_order(self.user_id, self.order_details)
-
     def get_order_details(self):
         return self.order_details
 
