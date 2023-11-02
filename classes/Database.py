@@ -57,7 +57,13 @@ class Database:
             if new_name and val.validate_text(new_name):
                 self.cursor.execute('UPDATE users SET name = ? WHERE tg_id = ?', (new_name, tg_id))
                 self.conn.commit()
-            elif new_username and val.validate_text(new_username):
+            else:
+                self.botObj.send_message_admin(f'Виникла помилка валідації при оновленні користувача\n'
+                                               f'Користувач:\n'
+                                               f'Нове ім\'я: {new_name}\n'
+                                               f'Новий username: @{new_username}\n'
+                                               f'Tg_id: {tg_id}')
+            if new_username and val.validate_text(new_username):
                 self.cursor.execute('UPDATE users SET username = ? WHERE tg_id = ?', (new_username, tg_id))
                 self.conn.commit()
             else:

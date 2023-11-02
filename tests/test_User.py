@@ -37,7 +37,7 @@ def test_db_to_dict(test_database):
     assert user_dict['phone'] == '380123456789'
     assert user_dict['username'] == 'johndoe'
 
-def test_user_update_user(test_database):
+def test_update_user(test_database):
     user = User('37373737', test_database, './test_bot_dobromir.db', 'John Doe', '380123456789', 'johndoe')
     user.update_user("Jane", "jane_doe")
     del user
