@@ -9,7 +9,6 @@ import os
 def test_database():
     create_db()
     db = Database('./test_bot_dobromir.db')
-    user = User('41414141', db, './test_bot_dobromir.db', 'John', '380123456789', 'john')
     yield db
 
     db.close()  # Закрываем соединение с базой данных
