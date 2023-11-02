@@ -17,6 +17,8 @@ def test_database():
 
 def test_create_order(test_database):
     order = Order('41414141', test_database, './test_bot_dobromir.db')
+    del order
+    order = Order('41414141', test_database, '')
     assert order is not None
     assert order.id == 1
     assert order.order_details == {}
@@ -25,9 +27,10 @@ def test_create_order(test_database):
 def test_db_to_dict(test_database):
     user = User('37373737', test_database, './test_bot_dobromir.db', 'John Doe', '380123456789', 'johndoe')
     order = Order('37373737', test_database, './test_bot_dobromir.db')
-    print(user.id)
     order.add_product('borsch')
     order.set_count('borsch', 20)
+    del user, order
+    order = Order('37373737', test_database, '')
     order_dict = order.db_to_dict()
     assert isinstance(order_dict, dict)
     assert order_dict['id'] == 1
@@ -39,6 +42,8 @@ def test_get_order_details(test_database):
     order = Order('41414141', test_database, './test_bot_dobromir.db')
     order.add_product('borsch')
     order.set_count('borsch', 20)
+    del order
+    order = Order('41414141', test_database, '')
     order_details = order.get_order_details()
     assert order_details is not None
     assert order_details == {'borsch': 20}
