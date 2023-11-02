@@ -12,7 +12,7 @@ class Order:
     user_id = None
     status = ''
 
-    def __init__(self, tg_id: str, db_cursor: Database, botObj=False, order_details={}):
+    def __init__(self, tg_id: str, db_cursor: Database, botObj=None, order_details={}):
         self.botObj = botObj
         if val.validate_text(tg_id):
             self.tg_id = tg_id

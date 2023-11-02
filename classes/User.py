@@ -10,8 +10,8 @@ class User:
     default_phone = ""
     default_username = ""
 
-    def __init__(self, tg_id: str, db_cursor: Database, botObj=False, name="", phone="", username=""):
-        self.botObj = botObj
+    def __init__(self, tg_id: str, db_cursor: Database, bot_obj=None, name="", phone="", username=""):
+        self.botObj = bot_obj
         if tg_id == "5469111431":
             # doing something
             print("WARNING!!!!")
