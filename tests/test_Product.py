@@ -14,6 +14,14 @@ def test_database():
     db.close()  # Закрываем соединение с базой данных
     os.remove('./test_bot_dobromir.db')  # Удаляем файл базы данных
 
+def test_db_to_dict(test_database):
+    product = Product('borsch', test_database)
+    product_dict = product.db_to_dict()
+    assert isinstance(product_dict, dict)
+    assert product_dict['id'] == 1
+    assert product_dict['slug'] == 'borsch'
+    assert product_dict['name'] == 'Борщ'
+
 def test_get_all_products(test_database):
     products = Product.get_all_products(test_database)
     assert products is not None

@@ -15,7 +15,10 @@ def test_database():
     os.remove('./test_bot_dobromir.db')  # Удаляем файл базы данных
 
 def test_create_user(test_database):
-    user = User('37373737', test_database, './test_bot_dobromir.db',  'John Doe', '380123456789', 'johndoe')
+    db_cursor = test_database
+    user = User('37373737', db_cursor, './test_bot_dobromir.db',  'John Doe', '380123456789', 'johndoe')
+    # del user
+    # user = User('37373737', db_cursor, '')
     assert user is not None
     assert user.tg_id == "37373737"
     assert user.name == 'John Doe'
@@ -24,8 +27,15 @@ def test_create_user(test_database):
 
 def test_db_to_dict(test_database):
     user = User('37373737', test_database, './test_bot_dobromir.db', 'John Doe', '380123456789', 'johndoe')
-    # assert isinstance(user, dict)
-    assert False
+    del user
+    user = User()
+    user_dict = user.db_to_dict()
+    assert isinstance(user_dict, dict)
+    assert user_dict['id'] == 1
+    assert user_dict['tg_id'] == '37373737'
+    assert user_dict['name'] == 'John Doe'
+    assert user_dict['phone'] == '380123456789'
+    assert user_dict['username'] == 'johndoe'
 
 def test_user_update_user(test_database):
     user = User('37373737', test_database, './test_bot_dobromir.db', 'John Doe', '380123456789', 'johndoe')
