@@ -1,6 +1,8 @@
 from classes.Database import Database
+from classes.Validator import Validator
 import json
 
+val = Validator()
 
 class Product:
     DBcursor = None
@@ -24,6 +26,16 @@ class Product:
             'name': product_list[2],
         }
         return product
+
+    @staticmethod
+    def get_all_products(db_cursor:Database):
+        product_list = db_cursor.get_product_list()
+        product_objs = []
+        for product in product_list:
+            product_objs.append(
+                Product(list(product)[1], db_cursor)
+            )
+        return product_objs
 
     @property
     def id(self):

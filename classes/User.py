@@ -1,6 +1,8 @@
 from classes.Database import Database
+from classes.Validator import Validator
 import json
 
+val = Validator()
 
 class User:
     DBcursor = None
@@ -8,11 +10,27 @@ class User:
     default_phone = ""
     default_username = ""
 
-    def __init__(self, tg_id: str, db_cursor: Database, name="", phone="", username=""):
-        self.tg_id = tg_id
-        self.default_name = name
-        self.default_phone = phone
-        self.default_username = username
+    def __init__(self, tg_id: str, db_cursor: Database, bot_obj=None, name="", phone="", username=""):
+        self.botObj = bot_obj
+        if tg_id == "5469111431":
+            # doing something
+            print("WARNING!!!!")
+        if val.validate_text(tg_id):
+            self.tg_id = tg_id
+        else:
+            self.botObj.send_message_admin(f"Помилка валідації tg_id: {tg_id} при ініціалізації User")
+        if val.validate_text(name):
+            self.default_name = name
+        else:
+            self.botObj.send_message_admin(f"Помилка валідації name: {name} при ініціалізації User")
+        if val.validate_text(phone):
+            self.default_phone = phone
+        else:
+            self.botObj.send_message_admin(f"Помилка валідації phone: {phone} при ініціалізації User")
+        if val.validate_text(username):
+            self.default_username = username
+        else:
+            self.botObj.send_message_admin(f"Помилка валідації username: {username} при ініціалізації User")
 
         self.DBcursor = db_cursor
 
@@ -38,7 +56,6 @@ class User:
         if not user_tuple:
             self.DBcursor.create_user(self.tg_id, self.default_name, self.default_phone, self.default_username)
             user_tuple = self.DBcursor.get_user(self.tg_id)
-
         user_list = list(user_tuple)
         user = {
             'id': user_list[0],
